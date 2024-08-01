@@ -1,9 +1,14 @@
 package br.com.geremiasemerim.produtos.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity(name = "Produtos")
-@Table(name = "produto")
+@Entity(name = "produtos")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Produto {
 
     @Id
@@ -11,37 +16,6 @@ public class Produto {
     private Long id;
     private String nome;
     private Double preco;
+    private int quantidade;
 
-    public Produto(){
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public Double getPreco() {
-        return preco;
-    }
-
-    public void setPreco(Double preco) {
-        this.preco = preco;
-    }
-
-    public Produto(Long id, String nome, Double preco) {
-        this.id = id;
-        this.nome = nome;
-        this.preco = preco;
-    }
 }
