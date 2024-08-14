@@ -34,7 +34,7 @@ public class ProdutoController {
 
         Optional<Produto> possivelProduto = produtoRepository.findById(id);
 
-        if (possivelProduto.isEmpty()){
+        if (possivelProduto.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
@@ -45,14 +45,16 @@ public class ProdutoController {
 
         Produto produtoSalvo = produtoRepository.save(produtoAntigo);
         return ResponseEntity.ok(produtoSalvo);
+    }
 
     @DeleteMapping("produtos/{id}")
     public ResponseEntity<Void> deletarProduto(@PathVariable Long id) {
-        if (produtoRepository.existsById(id)) {
-            produtoRepository.deleteById(id);
+        if (produtoRepository.existsById(id)) { //verifica se o produto existe no banco de dados?
+            produtoRepository.deleteById(id); // exclui o item de acordo com o id.
             return ResponseEntity.noContent().build();
         }
 
+        return ResponseEntity.notFound().build();
     }
 
 }
