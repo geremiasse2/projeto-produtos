@@ -47,7 +47,7 @@ public class ProdutoController {
         return ResponseEntity.ok(produtoSalvo);
     }
 
-    @DeleteMapping("produtos/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarProduto(@PathVariable Long id) {
         if (produtoRepository.existsById(id)) { //verifica se o produto existe no banco de dados?
             produtoRepository.deleteById(id); // exclui o item de acordo com o id.

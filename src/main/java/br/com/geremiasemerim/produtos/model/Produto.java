@@ -18,4 +18,5 @@ public class Produto {
     private Double preco;
     private int quantidade;
 
+
 }
