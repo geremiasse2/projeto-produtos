@@ -1,6 +1,6 @@
 package br.com.geremiasemerim.produtos.model.dto;
 
 public record ItemQuantidade(
-        int item,
+        Long item,
         int quantidade) {
 }

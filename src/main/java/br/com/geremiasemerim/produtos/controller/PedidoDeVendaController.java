@@ -50,18 +50,36 @@ public class PedidoDeVendaController {
         Double valorTotal = 0.0;
         int quantidadeTotal = 0;
 
-        for (Produto produto : possiveisProdutos) {
-            valorTotal += produto.getPreco();
-            quantidadeTotal += produto.getQuantidade();
-        }
-        var totalItens = 0.0;
         for (ItemQuantidade itemQuantidade : pedido.teste()) {
-            System.out.printf("Item: %d, Quantidade: %d\n", itemQuantidade.item(), itemQuantidade.quantidade());
-            System.out.println("Item: " + itemQuantidade.item() + " Quantidade: " + itemQuantidade.quantidade());
-//            totalItens = itemQuantidade.item() * itemQuantidade.quantidade();
-//            System.out.println(totalItens);
+            Produto produtoEncontrado = null;
+
+            for (Produto produto : possiveisProdutos) {
+                if (produto.getId().equals(itemQuantidade.item())) {
+                    produtoEncontrado = produto;
+                    break;
+                }
+            }
+
+        if (produtoEncontrado == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
+        if (produtoEncontrado.getQuantidade() < itemQuantidade.quantidade()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        int quantidadeOriginal = produtoEncontrado.getQuantidade();
+        produtoEncontrado.setQuantidade(produtoEncontrado.getQuantidade() - itemQuantidade.quantidade());
+        produtoRepository.save(produtoEncontrado);
+
+        System.out.println("Produto: " + produtoEncontrado.getNome() +
+                " - Quantidade original: " + quantidadeOriginal +
+                ", Quantidade vendida: " + itemQuantidade.quantidade() +
+                ", Quantidade restante: " + produtoEncontrado.getQuantidade());
+
+        valorTotal += produtoEncontrado.getPreco() * itemQuantidade.quantidade();
+        quantidadeTotal += itemQuantidade.quantidade();
+        }
 
         PedidoDeVenda pedidoDeVenda = new PedidoDeVenda(
                 UUID.randomUUID(),
