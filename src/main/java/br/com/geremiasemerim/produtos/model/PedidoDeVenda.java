@@ -31,5 +31,4 @@ public class PedidoDeVenda {
     @Enumerated(value = EnumType.STRING)
     private TipoPagamento tipoPagamento;
     private Double valor;
-
 }
