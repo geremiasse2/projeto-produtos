@@ -1,5 +1,6 @@
 package br.com.geremiasemerim.produtos.controller;
 
+import br.com.geremiasemerim.produtos.controller.exception.EstoqueInsuficienteException;
 import br.com.geremiasemerim.produtos.model.Cliente;
 import br.com.geremiasemerim.produtos.model.PedidoDeVenda;
 import br.com.geremiasemerim.produtos.model.Produto;
@@ -29,6 +30,12 @@ public class PedidoDeVendaController {
     @Autowired
     private ProdutoRepository produtoRepository;
 
+    @ExceptionHandler(EstoqueInsuficienteException.class)
+    public ResponseEntity<String> handleEstoqueInsuficiente(EstoqueInsuficienteException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    }
+
+
     @GetMapping
     public ResponseEntity<List<PedidoDeVenda>> getTodosPedidosDeVenda(){
         List<PedidoDeVenda> pedidos = pedidoDeVendaRepository.findAll();
@@ -47,7 +54,7 @@ public class PedidoDeVendaController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        Double valorTotal = 0.0;
+        double valorTotal = 0.0;
         int quantidadeTotal = 0;
 
         for (ItemQuantidade itemQuantidade : pedido.teste()) {
@@ -65,17 +72,13 @@ public class PedidoDeVendaController {
         }
 
         if (produtoEncontrado.getQuantidade() < itemQuantidade.quantidade()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            throw new EstoqueInsuficienteException("Estoque insuficiente." + "O produto: " + itemQuantidade.item() + " tem " + produtoEncontrado.getQuantidade());
         }
 
         int quantidadeOriginal = produtoEncontrado.getQuantidade();
         produtoEncontrado.setQuantidade(produtoEncontrado.getQuantidade() - itemQuantidade.quantidade());
         produtoRepository.save(produtoEncontrado);
 
-        System.out.println("Produto: " + produtoEncontrado.getNome() +
-                " - Quantidade original: " + quantidadeOriginal +
-                ", Quantidade vendida: " + itemQuantidade.quantidade() +
-                ", Quantidade restante: " + produtoEncontrado.getQuantidade());
 
         valorTotal += produtoEncontrado.getPreco() * itemQuantidade.quantidade();
         quantidadeTotal += itemQuantidade.quantidade();
